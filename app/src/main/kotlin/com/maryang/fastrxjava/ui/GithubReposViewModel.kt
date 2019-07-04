@@ -1,30 +1,23 @@
 package com.maryang.fastrxjava.ui
 
 import com.maryang.fastrxjava.data.repository.GithubRepository
-import com.maryang.fastrxjava.data.source.DefaultCallback
 import com.maryang.fastrxjava.entity.GithubRepo
-import retrofit2.Call
-import retrofit2.Response
+import com.maryang.fastrxjava.entity.User
+import io.reactivex.Maybe
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class GithubReposViewModel {
     private val repository = GithubRepository()
 
-    fun getGithubRepos(
-        onResponse: (List<GithubRepo>) -> Unit,
-        onFailure: (Throwable) -> Unit
-    ) {
-        repository.getGithubRepos().enqueue(object : DefaultCallback<List<GithubRepo>>() {
-            override fun onResponse(
-                call: Call<List<GithubRepo>>,
-                response: Response<List<GithubRepo>>
-            ) {
-                onResponse(response.body() ?: emptyList())
-            }
+    fun getGithubRepos(): Single<List<GithubRepo>> =
+        repository.getGithubRepos()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
-            override fun onFailure(call: Call<List<GithubRepo>>, t: Throwable) {
-                super.onFailure(call, t)
-                onFailure(t)
-            }
-        })
-    }
+    fun getUser(): Maybe<User> =
+        repository.getUser()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 }
