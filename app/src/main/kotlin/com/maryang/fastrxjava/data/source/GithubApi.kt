@@ -1,5 +1,6 @@
 package com.maryang.fastrxjava.data.source
 
+import com.google.gson.JsonElement
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.entity.User
 import io.reactivex.Completable

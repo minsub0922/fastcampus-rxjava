@@ -10,7 +10,7 @@ class BaseApplication : Application() {
     companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var appContext: Context
-        const val TAG = "FastRxJava"
+        const val TAG = "FastRxJava2"
     }
 
     override fun onCreate() {
