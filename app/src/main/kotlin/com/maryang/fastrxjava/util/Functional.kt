@@ -22,6 +22,6 @@ object Functional {
         repos.filter {
             it.name.contains(search)
                 || it.description.contains(search)
-                || it.user.name.contains(search)
+                || it.owner.name.contains(search)
         }
 }

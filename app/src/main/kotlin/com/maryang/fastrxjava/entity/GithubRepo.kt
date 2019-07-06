@@ -1,5 +1,6 @@
 package com.maryang.fastrxjava.entity
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
@@ -8,7 +9,7 @@ data class GithubRepo(
     val name: String,
     val private: Boolean,
     @SerializedName("owner")
-    val user: User,
+    val owner: User,
     @SerializedName("html_url")
     val url: String,
     val description: String,
@@ -25,5 +26,7 @@ data class GithubRepo(
     @SerializedName("updated_at")
     val updatedAt: Date,
     @SerializedName("pushed_at")
-    val pushedAt: Date
+    val pushedAt: Date,
+    @Expose
+    var star: Boolean = false
 )
