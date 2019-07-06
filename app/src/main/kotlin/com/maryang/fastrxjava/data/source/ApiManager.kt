@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiManager {
 
-    private val gson =
+    val gson =
         GsonBuilder()
             .setLenient()
             .create()
@@ -29,7 +29,10 @@ object ApiManager {
             .client(okHttpClientBuilder
                 .addInterceptor { chain ->
                     val requestBuilder = chain.request().newBuilder()
-                        .header("Accept", "application/vnd.github.v3+json")
+                        .header(
+                            "Authorization",
+                            "token cb2b9191b26e6b282ddc8e45397abf57c26fc046"
+                        )
                     chain.proceed(requestBuilder.build())
                 }
                 .build())
