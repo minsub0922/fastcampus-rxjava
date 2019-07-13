@@ -31,7 +31,7 @@ object ApiManager {
                     val requestBuilder = chain.request().newBuilder()
                         .header(
                             "Authorization",
-                            "token xxxxx"
+                            "token c164c57b404b204bab32e0a08f6bf9732ef1ecac"
                         )
                     chain.proceed(requestBuilder.build())
                 }

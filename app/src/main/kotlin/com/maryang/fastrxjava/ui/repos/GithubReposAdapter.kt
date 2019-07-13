@@ -1,4 +1,4 @@
-package com.maryang.fastrxjava.ui
+package com.maryang.fastrxjava.ui.repos
 
 import android.view.LayoutInflater
 import android.view.View
