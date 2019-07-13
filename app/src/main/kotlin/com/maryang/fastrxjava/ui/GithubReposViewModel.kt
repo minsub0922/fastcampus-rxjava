@@ -3,7 +3,6 @@ package com.maryang.fastrxjava.ui
 import com.maryang.fastrxjava.data.repository.GithubRepository
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.entity.User
-import com.maryang.fastrxjava.util.Operators
 import com.maryang.fastrxjava.util.applySchedulersExtension
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -51,9 +50,6 @@ class GithubReposViewModel {
 
     var searchText = ""
 
-
-
-
     fun searchGithubRepos(search: String): Single<List<GithubRepo>> {
         searchText = search
         return Single.create<List<GithubRepo>> { emitter ->
@@ -69,15 +65,10 @@ class GithubReposViewModel {
                         emitter.onSuccess(it)
                     }
                 }, {})
-        }
-
-            .applySchedulersExtension() //이게 최고지
+        }   .applySchedulersExtension() //이게 최고지
 //            .compose(Operators.applySchedulers())   //아래의 두줄을 없앨 수 있다...
 //            .subscribeOn(Schedulers.io())
 //            .observeOn(AndroidSchedulers.mainThread())  // 이 두 줄을 없애고 싶다.
-
-
-
     }
 
     private fun checkStar(owner: String, repo: String): Completable =

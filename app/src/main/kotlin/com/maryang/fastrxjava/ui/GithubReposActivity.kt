@@ -1,5 +1,6 @@
 package com.maryang.fastrxjava.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.os.Handler
@@ -10,11 +11,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.maryang.fastrxjava.base.BaseApplication
+import com.maryang.fastrxjava.data.source.ApiManager
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.entity.User
-import io.reactivex.Single
+import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableMaybeObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -33,8 +34,21 @@ class GithubReposActivity : AppCompatActivity() {
         GithubReposAdapter()
     }
 
-    val subject = PublishSubject.create<String>()
+    val subject = PublishSubject.create<String>()   // hot observable
 
+    fun coldHot(){
+        //subject는 subscribe 여부와 상관없이 이벤트를 발행한다.
+        //내부에 observer list가 잇다.
+        //subscribe 하면 onNext를 싱행하는것이 아니라 list.add(observer) 이벤트 발행하고 상관없다..!
+        //onNext를 하면 list.forEach{ observer.onNext() }
+        //cold observable은 이벤트 발행하면 구독해요
+        //subject : list를 들고있어서 onNext하면 전체를 실행한다.
+        //.publish : connectableObservable : cold -> hot
+        //observable.connect : 이벤트 발행
+
+    }
+
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.maryang.fastrxjava.R.layout.activity_github_repos)
@@ -46,66 +60,99 @@ class GithubReposActivity : AppCompatActivity() {
 
         Log.d(BaseApplication.TAG, "current thread: ${Thread.currentThread().name}")
 
-        Single.just(true)
-            .doOnSuccess {
-                Log.d(BaseApplication.TAG, "just thread : ${Thread.currentThread().name}")
-            }
-            .subscribeOn(Schedulers.io())
-            .subscribe()
-        Single.just(true)
-            .doOnSuccess {
-                Log.d(BaseApplication.TAG, "just computation : ${Thread.currentThread().name}")
-            }
-            .subscribeOn(Schedulers.computation())
-            .subscribe()
-        Single.just(true)
-            .doOnSuccess {
-                Log.d(BaseApplication.TAG, "just trampoline : ${Thread.currentThread().name}")
-            }//메인이지만 비동기로 만들어준다..! task화가 되어 메인한테 줄을 세우고 메인이 쉬고있을때 작업을 한다.
-            .subscribeOn(Schedulers.trampoline())
-            .subscribe({
-                Log.d(BaseApplication.TAG, "just trampoline after : ${Thread.currentThread().name}")
-            },{
-
-            })
-        Single.just(true)
-            .doOnSuccess {
-                Log.d(BaseApplication.TAG, "just newThread : ${Thread.currentThread().name}")
-            }
-            .subscribeOn(Schedulers.newThread())
-            .subscribe()
-
-
-        val thread = Executors.newSingleThreadExecutor()
-        //싱글로 만들고 스레드의 동기성을 좀 유지하고 싶을때 사용! from
-        Single.just(true)
-            .doOnSuccess {
-                Log.d(BaseApplication.TAG, "just newThread2 : ${Thread.currentThread().name}")
-            }
-            //.subscribeOn(Schedulers.newThread())
-            .subscribeOn(Schedulers.from(thread))
-            .subscribe()
-        Single.just(true)
-            .doOnSuccess {
-                Log.d(BaseApplication.TAG, "just newThread2 : ${Thread.currentThread().name}")
-            }
-            //.subscribeOn(Schedulers.newThread())
-            .subscribeOn(Schedulers.from(thread))
-            .subscribe()
 
 
 
-        //검색할 때 text 바뀔때마다 api 보내기
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just thread : ${Thread.currentThread().name}")
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .subscribe()
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just computation : ${Thread.currentThread().name}")
+//            }
+//            .subscribeOn(Schedulers.computation())
+//            .subscribe()
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just trampoline : ${Thread.currentThread().name}")
+//            }//메인이지만 비동기로 만들어준다..! task화가 되어 메인한테 줄을 세우고 메인이 쉬고있을때 작업을 한다.
+//            .subscribeOn(Schedulers.trampoline())
+//            .subscribe({
+//                Log.d(BaseApplication.TAG, "just trampoline after : ${Thread.currentThread().name}")
+//            },{
+//
+//            })
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just newThread : ${Thread.currentThread().name}")
+//            }
+//            .subscribeOn(Schedulers.newThread())
+//            .subscribe()
+
+
+//        val thread = Executors.newSingleThreadExecutor()
+//        //싱글로 만들고 스레드의 동기성을 좀 유지하고 싶을때 사용! from
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just newThread2 : ${Thread.currentThread().name}")
+//            }
+//            //.subscribeOn(Schedulers.newThread())
+//            .subscribeOn(Schedulers.from(thread))
+//            .subscribe()
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just newThread2 : ${Thread.currentThread().name}")
+//            }
+//            //.subscribeOn(Schedulers.newThread())
+//            .subscribeOn(Schedulers.from(thread))
+//            .subscribe()
+//
+//
+//
+//        //검색할 때 text 바뀔때마다 api 보내기
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just io thread: ${Thread.currentThread().name}")
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .subscribe()
+//
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(
+//                    BaseApplication.TAG,
+//                    "just computation thread: ${Thread.currentThread().name}"
+//                )
+//            }
+//            .subscribeOn(Schedulers.computation())
+//            .subscribe()
+//
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just trampoline thread: ${Thread.currentThread().name}")
+//            }
+//            .subscribeOn(Schedulers.trampoline())
+//            .subscribe()
+//
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just newThread: ${Thread.currentThread().name}")
+//            }
+//            .subscribeOn(Schedulers.newThread())
+//            .subscribe()
+//
+//        Single.just(true)
+//            .doOnSuccess {
+//                Log.d(BaseApplication.TAG, "just newThread2: ${Thread.currentThread().name}")
+//            }
+//            .subscribeOn(Schedulers.newThread())
+//            .subscribe()
+
+
         searchText.addTextChangedListener(object : TextWatcher {
-
-            private val WHAT_SEARCH = 0
-            private val handler = Handler(Handler.Callback { message ->
-                when (message.what) {
-                    WHAT_SEARCH ->
-                        searchLoad(message.obj.toString(), true)
-                }
-                false
-            })
 
             override fun afterTextChanged(text: Editable?) {
 //                handler.removeCallbacksAndMessages(null)
@@ -125,6 +172,8 @@ class GithubReposActivity : AppCompatActivity() {
             }
         })
         subjectSubscribe()
+
+
     }
 
     //get Error ! only main thread can handle view
@@ -141,17 +190,40 @@ class GithubReposActivity : AppCompatActivity() {
     private fun searchLoad(search: String, showLoading: Boolean) {
         if (showLoading)
             showLoading()
-//        viewModel.searchGithubRepos(search)
-//            .subscribe(object : DisposableSingleObserver<List<GithubRepo>>() {
-//                override fun onSuccess(t: List<GithubRepo>) {
-//                    hideLoading()
-//                    adapter.items = t
-//                }
-//
-//                override fun onError(e: Throwable) {
-//                    hideLoading()
-//                }
-//            }
+
+        val githubApi = ApiManager.githubApi
+
+        val mObservable: Single<List<GithubRepo>> =
+            githubApi
+                .searchRepos(search).map {
+                    it.asJsonObject.getAsJsonArray("items")
+                        .map{
+                            ApiManager.gson.fromJson(it, GithubRepo::class.java)!!
+                        }
+                }
+
+        mObservable
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                adapter.items = it
+            },{
+
+            })
+
+        viewModel.searchGithubRepos(search)
+            .subscribe(object : DisposableSingleObserver<List<GithubRepo>>() {
+                override fun onSuccess(t: List<GithubRepo>) {
+                    hideLoading()
+                    adapter.items = t
+                }
+
+                override fun onError(e: Throwable) {
+                    hideLoading()
+                }
+            })
+
+
 
 //        viewModel.searchGithubRepos(search)
 //            .toFlowable()
@@ -183,18 +255,19 @@ class GithubReposActivity : AppCompatActivity() {
         //백버튼을 누르면 액티비티는 종료가됩니다.
         //액티비티에 있느 Obervable이 구독하는 Observer는 액티비티의 Context를 참조합니다(view)  -> GC가 쑤집을 못한다! 참조하고 있으니까
         //액티비티는 종료가 되이ㅓ야하는데, Dispose 가 되어있지않은 Observer에 Context가 잡혀있어 사라지지 않는다.
-        viewModel.getGithubRepos()
-            .subscribe(object: DisposableSingleObserver<List<GithubRepo>>(){    //observer를 구독하자
-                override fun onSuccess(t: List<GithubRepo>) {
-                    hideLoading()
-                    adapter.items = t
-                }
-
-                override fun onError(e: Throwable) {
-                    hideLoading()
-                }
-
-            })
+//        viewModel.getGithubRepos()
+//            .subscribe(object: DisposableSingleObserver<List<GithubRepo>>(){    //observer를 구독하자
+//                override fun onSuccess(t: List<GithubRepo>) {
+//                    hideLoading()
+//                    adapter.items = t
+//                }
+//
+//                override fun onError(e: Throwable) {
+//                    hideLoading()
+//                    Log.d("tagg", e.toString())
+//                }
+//
+//            })
 
 
         //Single.zip --> 두 쓰레드를 동시에 보내고 늦게 끝난 놈 기준으로 subscribe처리를 한다.
@@ -202,20 +275,21 @@ class GithubReposActivity : AppCompatActivity() {
         //flat map 객체 자체를 변경
         //flat map을 쓰는이유는 결과물이 달라질것이다 라는 명시 !!
 
-        viewModel.getGithubRepos().toMaybe()
-            .subscribeOn(Schedulers.io())   //해준 이유는 레포 따라 올라가면 main엣서 끝나게끔 해놨으니까 !!
-            .doOnSuccess{
-                //getGithubRepos 종료되면 아래의 로그가 불립니다.
-                Log.d(BaseApplication.TAG, "getGithubRepos")
-            }
-                // getUserRepo 호출
-            .flatMap { viewModel.getUserRepo() }
-            .doOnSuccess{
-                //getUserRepo 종료되면 로그가 불림.
-                Log.d(BaseApplication.TAG, "getUser")
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+        //이눔시키 에러 !!!
+//        viewModel.getGithubRepos().toMaybe()
+//            .subscribeOn(Schedulers.io())   //해준 이유는 레포 따라 올라가면 main엣서 끝나게끔 해놨으니까 !!
+//            .doOnSuccess{
+//                //getGithubRepos 종료되면 아래의 로그가 불립니다.
+//                Log.d(BaseApplication.TAG, "getGithubRepos")
+//            }
+//                // getUserRepo 호출
+//            .flatMap { viewModel.getUserRepo() }
+//            .doOnSuccess{
+//                //getUserRepo 종료되면 로그가 불림.
+//                Log.d(BaseApplication.TAG, "getUser")
+//            }
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe()
     }
 
     private fun load2(){
@@ -235,21 +309,6 @@ class GithubReposActivity : AppCompatActivity() {
                 }
 
             })
-    }
-
-    private fun load3(){
-
-        viewModel.updatetUser()
-            .subscribe(object: DisposableCompletableObserver(){
-                override fun onComplete() {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun onError(e: Throwable) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-            })
-
     }
 
     private fun showLoading() {
