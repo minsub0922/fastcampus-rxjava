@@ -1,11 +1,14 @@
 package com.maryang.fastrxjava.entity
 
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
+@Parcelize
 data class GithubRepo(
-    val id: Long,
+    override val id: Long,
     val name: String,
     val private: Boolean,
     @SerializedName("owner")
@@ -29,4 +32,4 @@ data class GithubRepo(
     val pushedAt: Date,
     @Expose
     var star: Boolean = false
-)
+) : Identifier, Parcelable

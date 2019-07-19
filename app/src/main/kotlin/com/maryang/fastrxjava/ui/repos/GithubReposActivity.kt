@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.maryang.fastrxjava.entity.GithubRepo
-import com.maryang.fastrxjava.util.BackpressureSample
+import com.maryang.fastrxjava.util.DataObserver
 import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.activity_github_repos.*
 
@@ -21,6 +21,22 @@ class GithubReposActivity : AppCompatActivity() {
         GithubReposAdapter()
     }
 
+    private val eventDisposable = DataObserver.observe()
+        .filter { it is GithubRepo }
+        .subscribe { repo ->
+            adapter.items.find {
+                it.id == repo.id
+            }?.apply {
+                star = star.not()
+            }
+            adapter.notifyDataSetChanged()
+        }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        eventDisposable.dispose()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.maryang.fastrxjava.R.layout.activity_github_repos)
@@ -29,8 +45,6 @@ class GithubReposActivity : AppCompatActivity() {
         recyclerView.adapter = this.adapter
 
         refreshLayout.setOnRefreshListener { viewModel.searchGithubRepos() }
-
-        BackpressureSample.overBackpressure()
 
         searchText.addTextChangedListener(object : TextWatcher {
 
