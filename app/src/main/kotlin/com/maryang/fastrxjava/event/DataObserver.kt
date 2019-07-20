@@ -1,4 +1,4 @@
-package com.maryang.fastrxjava.util
+package com.maryang.fastrxjava.event
 
 import com.maryang.fastrxjava.entity.Identifier
 import io.reactivex.android.schedulers.AndroidSchedulers

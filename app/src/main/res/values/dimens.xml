@@ -53,5 +53,5 @@
     <dimen name="font_800">34sp</dimen>
     <dimen name="font_900">40sp</dimen>
 
-    <dimen name="github_repos_avatar_width">42dp</dimen>
+    <dimen name="owner_avatar_width">54dp</dimen>
 </resources>

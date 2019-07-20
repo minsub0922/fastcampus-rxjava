@@ -1,13 +1,11 @@
 package com.maryang.fastrxjava.ui.repos
 
-import android.util.Log
 import com.maryang.fastrxjava.data.repository.GithubRepository
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.util.applySchedulersExtension
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
@@ -33,13 +31,11 @@ class GithubReposViewModel {
 
     fun searchGithubReposObservable() =
         Single.create<List<GithubRepo>> { emitter ->
-            Log.d("GithubRepos2", "thread1: ${Thread.currentThread()}")
             repository.searchGithubRepos(searchText)
                 .subscribe({
-                    Log.d("GithubRepos2", "thread2: ${Thread.currentThread()}")
                     Completable.merge(
                         it.map { repo ->
-                            checkStar(repo.owner.userName, repo.name)
+                            repository.checkStar(repo.owner.userName, repo.name)
                                 .doOnComplete { repo.star = true }
                                 .onErrorComplete()
                         }
@@ -50,9 +46,4 @@ class GithubReposViewModel {
         }
             .applySchedulersExtension()
             .toObservable()
-
-    private fun checkStar(owner: String, repo: String): Completable =
-        repository.checkStar(owner, repo)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 }

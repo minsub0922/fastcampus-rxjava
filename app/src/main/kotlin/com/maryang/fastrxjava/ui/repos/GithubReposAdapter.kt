@@ -40,7 +40,7 @@ class GithubReposAdapter : RecyclerView.Adapter<GithubReposAdapter.RepoViewHolde
                 repoStar.imageResource =
                     if (repo.star) R.drawable.baseline_star_24
                     else R.drawable.baseline_star_border_24
-                onClick { GithubRepoActivity.start(context, repo.id) }
+                onClick { GithubRepoActivity.start(context, repo) }
                 repoStar.onClick { }
             }
         }
