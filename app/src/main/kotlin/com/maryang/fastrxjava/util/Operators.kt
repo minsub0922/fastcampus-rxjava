@@ -241,7 +241,6 @@ object Operators {
         ).subscribe {
             //실제로 받는 순서대로 받는다 !
             //concat 처럼 순서대로 받아버리면 flatmap으로 대체가 된다.
-
         }
         Single.zip<Boolean, Int, String>(   //내가 넣은 인자는 Boolean, Int 인데 결과는 String으로 하겠다
             Single.just(true),

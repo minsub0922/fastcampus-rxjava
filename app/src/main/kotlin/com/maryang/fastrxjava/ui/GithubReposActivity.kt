@@ -8,12 +8,15 @@ import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.maryang.fastrxjava.base.BaseApplication
 import com.maryang.fastrxjava.data.source.ApiManager
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.entity.User
+import com.maryang.fastrxjava.ui.repos.GithubReposAdapter
+import com.maryang.fastrxjava.util.HotObservable
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableMaybeObserver
@@ -48,6 +51,8 @@ class GithubReposActivity : AppCompatActivity() {
 
     }
 
+
+
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,10 +63,10 @@ class GithubReposActivity : AppCompatActivity() {
 
         refreshLayout.setOnRefreshListener { searchLoad(viewModel.searchText, false) }
 
-        Log.d(BaseApplication.TAG, "current thread: ${Thread.currentThread().name}")
+        //Log.d(BaseApplication.TAG, "current thread: ${Thread.currentThread().name}")
 
 
-
+        HotObservable.logPublishSubject()
 
 //        Single.just(true)
 //            .doOnSuccess {
@@ -202,26 +207,48 @@ class GithubReposActivity : AppCompatActivity() {
                         }
                 }
 
-        mObservable
+        val getUserObservable : Maybe<User> =
+            githubApi
+                .getUser("user")
+
+        mObservable.toMaybe()
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+            .doOnSuccess {
                 adapter.items = it
-            },{
+            }
+            .flatMap { getUserObservable }
+            .doOnSuccess {
+                Toast.makeText(this, it.email, Toast.LENGTH_SHORT).show()
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
 
-            })
+        viewModel.getGithubRepos().toMaybe()
+            .subscribeOn(Schedulers.io())   //해준 이유는 레포 따라 올라가면 main엣서 끝나게끔 해놨으니까 !!
+            .doOnSuccess{
+                //getGithubRepos 종료되면 아래의 로그가 불립니다.
+                Log.d(BaseApplication.TAG, "getGithubRepos")
+            }
+            // getUserRepo 호출
+            .flatMap { viewModel.getUserRepo() }
+            .doOnSuccess{
+                //getUserRepo 종료되면 로그가 불림.
+                Log.d(BaseApplication.TAG, "getUser")
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
 
-        viewModel.searchGithubRepos(search)
-            .subscribe(object : DisposableSingleObserver<List<GithubRepo>>() {
-                override fun onSuccess(t: List<GithubRepo>) {
-                    hideLoading()
-                    adapter.items = t
-                }
-
-                override fun onError(e: Throwable) {
-                    hideLoading()
-                }
-            })
+//        viewModel.searchGithubRepos(search)
+//            .subscribe(object : DisposableSingleObserver<List<GithubRepo>>() {
+//                override fun onSuccess(t: List<GithubRepo>) {
+//                    hideLoading()
+//                    adapter.items = t
+//                }
+//
+//                override fun onError(e: Throwable) {
+//                    hideLoading()
+//                }
+//            })
 
 
 
