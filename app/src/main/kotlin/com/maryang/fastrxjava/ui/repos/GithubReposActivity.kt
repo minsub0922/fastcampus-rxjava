@@ -1,9 +1,12 @@
 package com.maryang.fastrxjava.ui.repos
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.maryang.fastrxjava.R
@@ -11,9 +14,9 @@ import com.maryang.fastrxjava.base.BaseActivity
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.util.BackpressureSample
 import com.maryang.fastrxjava.event.DataObserver
+import com.maryang.fastrxjava.ui.my_page.MyPageActivity
 import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.activity_github_repos.*
-
 
 class GithubReposActivity : BaseActivity() {
 
@@ -73,6 +76,21 @@ class GithubReposActivity : BaseActivity() {
                     hideLoading()
                 }
             })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.appbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.action_my_page -> {
+                startActivity(Intent(this, MyPageActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun subscribeDataObserver() {

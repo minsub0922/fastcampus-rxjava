@@ -31,26 +31,6 @@ class GithubReposViewModel {
             .subscribeOn(Schedulers.io())   //이전 stream에 대한 스레드 지정
             .observeOn(AndroidSchedulers.mainThread())  //아래에 대한 스레드 지정
 
-//    fun getGithubRepos(
-//        onResponse: (List<GithubRepo>) -> Unit,
-//        onFailure: (Throwable) -> Unit
-//    ) {
-//        repository.getGithubRepos()
-//            .enqueue(object : DefaultCallback<List<GithubRepo>>() {
-//                override fun onResponse(
-//                    call: Call<List<GithubRepo>>,
-//                    response: Response<List<GithubRepo>>
-//                ) {
-//                    onResponse(response.body() ?: emptyList())
-//                }
-//
-//                override fun onFailure(call: Call<List<GithubRepo>>, t: Throwable) {
-//                    super.onFailure(call, t)
-//                    onFailure(t)
-//                }
-//            })
-//    }
-
     private val searchSubject = PublishSubject.create<Pair<String, Boolean>>()
     var searchText = ""
 

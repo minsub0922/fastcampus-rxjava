@@ -30,5 +30,6 @@
         <activity
             android:name="com.maryang.fastrxjava.ui.user.UserActivity"
             android:launchMode="singleTop" />
+        <activity android:name=".ui.my_page.MyPageActivity" />
     </application>
 </manifest>

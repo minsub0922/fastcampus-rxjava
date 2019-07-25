@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import com.facebook.stetho.Stetho
 
 class BaseApplication : Application() {
 
@@ -16,8 +17,7 @@ class BaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = this
-        //Stetho.initializeWithDefaults(this)
-        Log.d("tagg","sttarttd??")
+        Stetho.initializeWithDefaults(this)
     }
 
 }

@@ -14,6 +14,8 @@ interface GithubApi {
     fun searchRepos(
         @Query("q") search: String
     ): Single<JsonElement>
+
+    //GET /users/:username/repos
     @GET("users/{userName}/repos")
     fun getRepos(
         @Path("userName") userName: String = "googlesamples"
@@ -45,4 +47,6 @@ interface GithubApi {
         @Path("owner") owner: String,
         @Path("repo") repo: String
     ): Completable
+
+
 }
