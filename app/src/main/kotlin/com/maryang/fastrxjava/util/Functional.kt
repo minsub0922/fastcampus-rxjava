@@ -40,7 +40,7 @@ object Functional {
     fun findRepo(repos: List<GithubRepo>, search: String): List<GithubRepo> =
         repos.filter {
             it.name.contains(search)
-                || it.description.contains(search)
-                || it.owner.name.contains(search)
+                || it.description?.contains(search) ?: false
+                || it.owner.userName.contains(search)
         }
 }

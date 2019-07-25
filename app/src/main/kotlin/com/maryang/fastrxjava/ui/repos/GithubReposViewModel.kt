@@ -1,4 +1,4 @@
-package com.maryang.fastrxjava.ui
+package com.maryang.fastrxjava.ui.repos
 
 import android.util.Log
 import com.maryang.fastrxjava.data.repository.GithubRepository
@@ -69,19 +69,17 @@ class GithubReposViewModel {
             .map { it.second }
             .observeOn(AndroidSchedulers.mainThread())
 
-
-
     fun searchGithubReposObservable() =
         Single.create<List<GithubRepo>> { emitter ->
-            Log.d("GithubRepos2", "thread1: ${Thread.currentThread()}")
             repository.searchGithubRepos(searchText)
                 .subscribe({
                     Log.d("GithubRepos2", "thread2: ${Thread.currentThread()}")
                     Completable.merge(
                         it.map { repo ->
-                            checkStar(repo.owner.userName, repo.name)
+                            repository.checkStar(repo.owner.userName, repo.name)
                                 .doOnComplete { repo.star = true }
                                 .onErrorComplete()
+                                //Error Operator를 활용해서 에러가 발생하더라도 스트림이 끊기지 않도록 한다
                         }
                     ).subscribe {
                         emitter.onSuccess(it)

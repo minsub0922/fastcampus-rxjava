@@ -1,7 +1,6 @@
 package com.maryang.fastrxjava.util
 
 import com.maryang.fastrxjava.entity.GithubRepo
-import com.maryang.fastrxjava.entity.Sample
 import com.maryang.fastrxjava.entity.User
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -32,12 +31,6 @@ object Operators {
 
             }
             1
-        }
-        Sample().apply {
-            data = 3
-        }
-        Sample().also {
-            it.data
         }
     }
 

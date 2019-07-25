@@ -11,11 +11,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.maryang.fastrxjava.base.BaseApplication
 import com.maryang.fastrxjava.data.source.ApiManager
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.entity.User
 import com.maryang.fastrxjava.ui.repos.GithubReposAdapter
+import com.maryang.fastrxjava.ui.repos.GithubReposViewModel
 import com.maryang.fastrxjava.util.HotObservable
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -48,7 +50,6 @@ class GithubReposActivity : AppCompatActivity() {
         //subject : list를 들고있어서 onNext하면 전체를 실행한다.
         //.publish : connectableObservable : cold -> hot
         //observable.connect : 이벤트 발행
-
     }
 
 
@@ -58,7 +59,7 @@ class GithubReposActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(com.maryang.fastrxjava.R.layout.activity_github_repos)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
         recyclerView.adapter = this.adapter
 
         refreshLayout.setOnRefreshListener { searchLoad(viewModel.searchText, false) }
@@ -223,7 +224,8 @@ class GithubReposActivity : AppCompatActivity() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
 
-        viewModel.getGithubRepos().toMaybe()
+        viewModel
+            .getGithubRepos().toMaybe()
             .subscribeOn(Schedulers.io())   //해준 이유는 레포 따라 올라가면 main엣서 끝나게끔 해놨으니까 !!
             .doOnSuccess{
                 //getGithubRepos 종료되면 아래의 로그가 불립니다.
@@ -231,12 +233,17 @@ class GithubReposActivity : AppCompatActivity() {
             }
             // getUserRepo 호출
             .flatMap { viewModel.getUserRepo() }
+            .subscribeOn(Schedulers.computation())
+            .subscribeOn(Schedulers.trampoline())
+            .subscribeOn(Schedulers.newThread())
             .doOnSuccess{
                 //getUserRepo 종료되면 로그가 불림.
                 Log.d(BaseApplication.TAG, "getUser")
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribe({
+                //setText
+            })
 
 //        viewModel.searchGithubRepos(search)
 //            .subscribe(object : DisposableSingleObserver<List<GithubRepo>>() {

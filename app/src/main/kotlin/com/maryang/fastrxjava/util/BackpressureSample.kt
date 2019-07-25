@@ -10,18 +10,9 @@ import io.reactivex.schedulers.Schedulers
 object BackpressureSample {
 
     fun overBackpressure() {
-//        Observable
-//            .range(1, 999999999)
-//            .doOnNext { Log.d(TAG, "send event $it") }
-//            .observeOn(Schedulers.computation())
-//            .subscribe {
-//                Thread.sleep(100)
-//                Log.d(TAG, "receive event $it")
-//            }
-
         Flowable
             .range(1, 999999999)
-            .onBackpressureBuffer()
+            .onBackpressureDrop()
             .doOnNext { Log.d(TAG, "send event $it") }
             .observeOn(Schedulers.computation())
             .subscribe {

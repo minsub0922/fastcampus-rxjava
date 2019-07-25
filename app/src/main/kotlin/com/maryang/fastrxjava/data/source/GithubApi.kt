@@ -6,11 +6,7 @@ import com.maryang.fastrxjava.entity.User
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface GithubApi {
 
@@ -36,5 +32,17 @@ interface GithubApi {
     @POST("users/{userName}")
     fun updatteUser(
         @Path("userName") userName: String = "octocat"
+    ): Completable
+
+    @PUT("user/starred/{owner}/{repo}")
+    fun star(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String
+    ): Completable
+
+    @DELETE("user/starred/{owner}/{repo}")
+    fun unstar(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String
     ): Completable
 }
