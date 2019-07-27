@@ -3,6 +3,7 @@ package com.maryang.fastrxjava.data.source
 import com.google.gson.JsonElement
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.entity.MyInfo
+import com.maryang.fastrxjava.entity.MyRepos
 import com.maryang.fastrxjava.entity.User
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -15,8 +16,6 @@ interface GithubApi {
     fun searchRepos(
         @Query("q") search: String
     ): Single<JsonElement>
-
-
 
     //GET /users/:username/repos
     @GET("users/{userName}/repos")
@@ -31,7 +30,10 @@ interface GithubApi {
     ): Completable
 
     @GET("user/repos")
-    fun getMyInfo():Single<List<MyInfo>>
+    fun getMyRepos():Single<List<MyRepos>>
+
+    @GET("user")
+    fun getMyProfile():Single<MyInfo>
 
     @GET("users/{userName}")
     fun getUser(

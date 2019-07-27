@@ -13,22 +13,16 @@ data class MyInfo(
     val userName: String,
     @SerializedName("name")
     val name: String,
-    @SerializedName("full_name")
-    val fullName: String,
     @SerializedName("html_url")
     val htmlUrl: String,
-    @SerializedName("description")
-    val description: String
+    @SerializedName("bio")
+    val introduce: String,
+    @SerializedName("company")
+    val company: String,
+    @SerializedName("blog")
+    val blogUrl: String,
+    @SerializedName("avatar_url")
+    val profileImageUrl: String
 
-) : Identifier, Parcelable {
-    @Parcelize
-    data class Owner(
-        @SerializedName("id")
-        override val id: Long,
-        @SerializedName("login")
-        val userName: String,
-        @SerializedName("avatar_url")
-        val avatarUrl: String
-    ) : Identifier, Parcelable
-}
+) : Identifier, Parcelable
 

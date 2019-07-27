@@ -3,6 +3,7 @@ package com.maryang.fastrxjava.data.repository
 import com.maryang.fastrxjava.data.source.ApiManager
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.entity.MyInfo
+import com.maryang.fastrxjava.entity.MyRepos
 import com.maryang.fastrxjava.entity.User
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -14,8 +15,11 @@ class GithubRepository {
 
     private val api = ApiManager.githubApi
 
-    fun getMyInfo():Single<List<MyInfo>> =
-            api.getMyInfo()
+    fun getMyRepos():Single<List<MyRepos>> =
+            api.getMyRepos()
+
+    fun getMyProfile():Single<MyInfo> =
+            api.getMyProfile()
 
     fun getGithubRepos(): Single<List<GithubRepo>> =
         api.getRepos()
