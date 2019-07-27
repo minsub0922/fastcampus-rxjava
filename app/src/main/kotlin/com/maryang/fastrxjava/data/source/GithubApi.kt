@@ -2,6 +2,7 @@ package com.maryang.fastrxjava.data.source
 
 import com.google.gson.JsonElement
 import com.maryang.fastrxjava.entity.GithubRepo
+import com.maryang.fastrxjava.entity.MyInfo
 import com.maryang.fastrxjava.entity.User
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -15,6 +16,8 @@ interface GithubApi {
         @Query("q") search: String
     ): Single<JsonElement>
 
+
+
     //GET /users/:username/repos
     @GET("users/{userName}/repos")
     fun getRepos(
@@ -26,6 +29,10 @@ interface GithubApi {
         @Path("owner") owner: String,
         @Path("repo") repo: String
     ): Completable
+
+    @GET("user/repos")
+    fun getMyInfo():Single<List<MyInfo>>
+
     @GET("users/{userName}")
     fun getUser(
         @Path("userName") userName: String = "octocat"
