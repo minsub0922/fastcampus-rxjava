@@ -2,14 +2,19 @@ package com.maryang.fastrxjava.ui.my_page
 
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.maryang.fastrxjava.base.BaseActivity
+import kotlinx.android.synthetic.main.activity_my_page.*
 
 class MyPageActivity : BaseActivity() {
 
     override var isChildActivity: Boolean = true
 
-    private val viewModel: GithubMyProfileViewModel by lazy {
-        GithubMyProfileViewModel()
+    private val viewModel: GithubMyReposViewModel by lazy {
+        GithubMyReposViewModel()
+    }
+    private val adapter: GithubMyRepoAdapter by lazy {
+        GithubMyRepoAdapter()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,15 +23,21 @@ class MyPageActivity : BaseActivity() {
 
         super.onCreate(savedInstanceState)
 
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = this.adapter
+
+        subscribeRepos()
+    }
+
+    private fun subscribeRepos(){
         viewModel
             .getMyInfo()
             .subscribe(
                 {
-                    Log.d("tagg",it.toString())
+                    adapter.items = it
                 },{
                     Log.d("tagg",it.message)
                 }
             )
-
     }
 }

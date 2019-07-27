@@ -5,7 +5,7 @@ import com.maryang.fastrxjava.entity.MyInfo
 import com.maryang.fastrxjava.util.applySchedulersExtension
 import io.reactivex.Single
 
-class GithubMyProfileViewModel {
+class GithubMyReposViewModel {
     private val repository = GithubRepository()
 
     fun getMyInfo(): Single<List<MyInfo>> =
